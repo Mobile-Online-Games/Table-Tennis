@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Best Table Tennis Game which is better responsive on Mobile and Computer both. Don't Forget to share the score to your Friends.">
+    <meta name="keywords" 
+    content="Table Tennis,
+            Table Tennis game,
+            Table Tennis game online,
+            Table Tennis game online free,
+            Table Tennis play online free,
+            Ping Pong table games free online,
+            Table Tennis game for Pc,
+            Table Tennis game for Mobile,
+            Ping Pong game,
+            Ping pong game online,
+            Ping pong game for Pc,
+            Ping pong game for mobile,
+            Best Ping Pong game,
+            Best Table Tennis game,
+            Ping Pong,
+            Tennis Ball,
+            Tennis ball game,
+            Badminton game">
+    <meta name="author" content="Vansh Kothari">
+    <meta name="robots" content="index,follow">
+    <meta name=""
+    <title>Best Table Tennis Game.</title>
+    <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #303030a8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        h1 {
+            color: #ffffff;
+            font-size: clamp(16px, 4vw, 24px);
+            margin: 10px;
+            text-shadow: 2px 2px 4px rgb(0, 76, 255);
+        }
+
+        #gameContainer {
+            position: relative;
+            width: 90vw;
+            max-width: 800px;
+            aspect-ratio: 2 / 1;
+            height: auto;
+            background: #0011ff;
+            border: 4px solid #d9ff008f;
+            box-shadow: 0 0 35px 15px rgba(1, 238, 255, 0.662);
+            overflow: hidden;
+        }
+
+        #canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            image-rendering: pixelated;
+        }
+
+        #score {
+            position: absolute;
+            top: 5%;
+            width: 100%;
+            text-align: center;
+            color: #dadadd;
+            font-size: clamp(16px, 3vw, 24px);
+            text-shadow: 2px 2px 4px #f00;
+        }
+
+        #startScreen, #gameOverScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(35, 35, 41, 0.372);
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: clamp(18px, 4vw, 28px);
+            text-shadow: 2px 2px 4px rgb(0, 76, 255);
+        }
+
+        #startScreen button, #gameOverScreen button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: clamp(12px, 2.5vw, 16px);
+            background: #f00;
+            border: 2px solid #00b3ff;
+            color: #ffffff;
+            cursor: pointer;
+            font-family: 'Press Start 2P', cursive;
+            transition: all 0.2s;
+        }
+
+        #startScreen button:hover, #gameOverScreen button:hover {
+            background: #00b7e0;
+            color: #f00;
+        }
+
+        #difficultyButtons {
+            margin-top: 20px;
+        }
+
+        #gameContainer::after {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                transparent 0,
+                transparent 2px,
+                rgba(0, 0, 0, 0.1) 2px,
+                rgba(0, 0, 0, 0.1) 4px
+            );
+            pointer-events: none;
+        }
+
+        #mobileControls {
+            display: flex; /*Hidden by default, shown on mobile */
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px; /* Increased spacing from game container */
+            width: 90vw;
+            max-width: 800px; /* Match game container width */
+        }
+
+        #mobileControls button {
+            padding: 12px 30px; /* Larger tap area */
+            font-size: clamp(16px, 3.5vw, 20px); /* Slightly larger text */
+            background: #f00;
+            border: 2px solid #00b3ff;
+            color: #ffffff;
+            font-family: 'Press Start 2P', cursive;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 5px; /* Subtle rounding for aesthetics */
+        }
+
+        #mobileControls button:hover, #mobileControls button:active {
+            background: #00b7e0;
+            color: #f00;
+        }
+
+        #pauseButton {
+            position: absolute;
+            top: 5%;
+            right: 5%;
+            padding: 8px 12px;
+            font-size: clamp(10px, 2vw, 14px);
+            background: #f00;
+            border: 2px solid #00b3ff;
+            color: #ffffff;
+            cursor: pointer;
+            font-family: 'Press Start 2P', cursive;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div>
+            <h1>
+                Best Table Tennis Game
+            </h1>
+        </div>
+    </header>
+    <div id="gameContainer">
+        <canvas id="canvas"></canvas>
+        <div id="score">0 : 0</div>
+        <button id="pauseButton" style="display: none;">Pause</button>
+        <div id="startScreen">
+            <!-- <div>Ping Pong Game</div> -->
+            <div id="difficultyButtons">
+                <button id="easyButton" aria-label="Start game on easy difficulty">Easy</button><br>
+                <button id="mediumButton" aria-label="Start game on medium difficulty">Medium</button><br>
+                <button id="hardButton" aria-label="Start game on hard difficulty">Hard</button><br>
+            </div>
+        </div>
+        <div id="gameOverScreen" style="display: none;">
+            <div id="gameOverMessage"></div>
+            <button id="restartButton" aria-label="Restart the game">Play Again</button>
+            <button id="shareButton" aria-label="Share your score">Share Score</button>
+        </div>
+    </div>
+    <div id="mobileControls">
+        <button id="upButton" aria-label="Move paddle up"><img src="https://freepngimg.com/thumb/web_design/24677-8-up-arrow-transparent-image.png" width="40px" height="40px"></button>
+        <button id="downButton" aria-label="Move paddle down"><img src="https://pnghq.com/wp-content/uploads/arrow-down-png-vibrant-colors.png" width="40px" height="40px"></button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const startScreen = document.getElementById('startScreen');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const gameOverMessage = document.getElementById('gameOverMessage');
+        const easyButton = document.getElementById('easyButton');
+        const mediumButton = document.getElementById('mediumButton');
+        const hardButton = document.getElementById('hardButton');
+        const restartButton = document.getElementById('restartButton');
+        const shareButton = document.getElementById('shareButton');
+        const upButton = document.getElementById('upButton');
+        const downButton = document.getElementById('downButton');
+        const pauseButton = document.getElementById('pauseButton');
+        const mobileControls = document.getElementById('mobileControls');
+        var audio=new Audio("ballsound.mp3");
+        var over=new Audio("gameover.mp3");
+        var win=new Audio("gamewin.mp3");
+
+        // Detect mobile device
+        const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+            mobileControls.style.display = 'flex';
+        }
+
+        // Canvas sizing
+        function resizeCanvas() {
+            const container = document.getElementById('gameContainer');
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        let gameState = 'start';
+        let paddle1Y = canvas.height / 2 - (canvas.height * 0.25) / 2;
+        let paddle2Y = canvas.height / 2 - (canvas.height * 0.25) / 2;
+        const paddleHeight = canvas.height * 0.25;
+        const paddleWidth = canvas.width * 0.0125;
+        const paddleSpeed = canvas.height * 0.015;
+        let ballX = canvas.width / 2;
+        let ballY = canvas.height / 2;
+        // let ballSpeedX = canvas.width * 0.0075;
+        // let ballSpeedY = canvas.height * 0.01;
+        let ballSpeedX = canvas.width * 0.0075;
+        let ballSpeedY = canvas.height * 0.01;
+        let ballSpeedMultiplier = 1;
+        const maxBallSpeed = canvas.width * 0.015;
+        const ballRadius = canvas.width * 0.01125;
+        let playerScore = 0, computerScore = 0;
+        let keys = {};
+        let touchY = null;
+        let difficulty = 'medium';
+        let aiSpeed, aiOffset;
+        let isPaused = false;
+        let scorePauseTimer = 0;
+
+        // Input handling
+        document.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+            if (e.key === 'p' && gameState === 'playing') {
+                togglePause();
+            }
+        });
+        document.addEventListener('keyup', (e) => keys[e.key] = false);
+
+        // Touch controls
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            touchY = touch.clientY;
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const canvasRect = canvas.getBoundingClientRect();
+            const targetY = ((touch.clientY - canvasRect.top) / canvasRect.height) * canvas.height - paddleHeight / 2;
+            paddle1Y += (targetY - paddle1Y) * 0.2; // Smooth movement
+            paddle1Y = Math.max(0, Math.min(canvas.height - paddleHeight, paddle1Y));
+        });
+
+        canvas.addEventListener('touchend', () => {
+            touchY = null;
+        });
+
+        // Mobile button controls
+        let upPressed = false, downPressed = false;
+        upButton.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            upPressed = true;
+        });
+        upButton.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            upPressed = true;
+        });
+        upButton.addEventListener('mouseup', () => upPressed = false);
+        upButton.addEventListener('touchend', () => upPressed = false);
+
+        downButton.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            downPressed = true;
+        });
+        downButton.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            downPressed = true;
+        });
+        downButton.addEventListener('mouseup', () => downPressed = false);
+        downButton.addEventListener('touchend', () => downPressed = false);
+
+        // Button event listeners
+        easyButton.addEventListener('click', () => startGame('easy'));
+        mediumButton.addEventListener('click', () => startGame('medium'));
+        hardButton.addEventListener('click', () => startGame('hard'));
+        restartButton.addEventListener('click', () => {
+            gameState = 'start';
+            startScreen.style.display = 'flex';
+            gameOverScreen.style.display = 'none';
+            pauseButton.style.display = 'none';
+            if (isMobile) mobileControls.style.display = 'flex';
+        });
+
+        pauseButton.addEventListener('click', togglePause);
+
+        shareButton.addEventListener('click', () => {
+            const shareText = `I scored ${playerScore} vs ${computerScore} in Table Tennis Game! Try it out!`;
+            const shareUrl = window.location.href;
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Ping Pong',
+                    text: shareText,
+                    url: shareUrl
+                }).catch((err) => console.log('Share failed:', err));
+            } else {
+                // Fallback: Copy to clipboard
+                navigator.clipboard.writeText(`${shareText} ${shareUrl}`)
+                    .then(() => alert('Score copied to clipboard!'))
+                    .catch(() => alert('Failed to copy score.'));
+            }
+        });
+
+        function togglePause() {
+            if (scorePauseTimer > 0) return; // Prevent pausing during score delay
+            isPaused = !isPaused;
+            pauseButton.textContent = isPaused ? 'Resume' : 'Pause';
+            if (!isPaused) gameLoop();
+        }
+
+        function startGame(selectedDifficulty) {
+            difficulty = selectedDifficulty;
+            if (difficulty === 'easy') {
+                aiSpeed = 0.08;
+                aiOffset = paddleHeight * 0.4;
+            } else if (difficulty === 'medium') {
+                aiSpeed = 0.12;
+                aiOffset = paddleHeight * 0.3;
+            } else {
+                aiSpeed = 0.15;
+                aiOffset = paddleHeight * 0.1;
+            }
+            gameState = 'playing';
+            startScreen.style.display = 'none';
+            gameOverScreen.style.display = 'none';
+            pauseButton.style.display = 'block';
+            pauseButton.textContent = 'Pause';
+            playerScore = 0;
+            computerScore = 0;
+            paddle1Y = canvas.height / 2 - paddleHeight / 2;
+            paddle2Y = canvas.height / 2 - paddleHeight / 2;
+            ballSpeedMultiplier = 1;
+            isPaused = false;
+            scorePauseTimer = 0;
+            resetBall();
+            updateScore();
+            if (isMobile) mobileControls.style.display = 'flex';
+            gameLoop();
+        }
+
+        function resetBall() {
+            ballX = canvas.width / 2;
+            ballY = canvas.height / 2;
+            const minSpeedX = Math.max(canvas.width * 0.0075, 5);
+            // ballSpeedX = (Math.random() > 0.5 ? 1 : -1) * minSpeedX * ballSpeedMultiplier;
+            // ballSpeedY = (Math.random() * 0.015 - 0.0075) * canvas.height * ballSpeedMultiplier;
+            ballSpeedX = (Math.random() > 0.5 ? 0.6 : -0.6) * minSpeedX * ballSpeedMultiplier;
+            ballSpeedY = (Math.random() * 0.0001 - 0.0001) * canvas.height * ballSpeedMultiplier;
+            scorePauseTimer = 20; // Pause for ~1 second at 60fps
+        }
+
+        function updateScore() {
+            scoreElement.textContent = `${playerScore} : ${computerScore}`;
+        }
+
+        function computerAI() {
+            const paddle2Center = paddle2Y + paddleHeight / 2;
+            const randomOffset = aiOffset + (Math.random() - 0.5) * paddleHeight * 0.1;
+            const targetY = ballY - paddleHeight / 2 + randomOffset;
+            paddle2Y += (targetY - paddle2Y) * aiSpeed; // Interpolated movement
+            paddle2Y = Math.max(0, Math.min(canvas.height - paddleHeight, paddle2Y));
+        }
+
+        function gameLoop() {
+            if (gameState !== 'playing' || isPaused) return;
+
+            if (scorePauseTimer > 0) {
+                scorePauseTimer--;
+                // Still draw the scene during pause
+                draw();
+                requestAnimationFrame(gameLoop);
+                return;
+            }
+
+            // Player paddle movement
+            if (keys['ArrowUp'] || upPressed) paddle1Y -= paddleSpeed;
+            if (keys['ArrowDown'] || downPressed) paddle1Y += paddleSpeed;
+            paddle1Y = Math.max(0, Math.min(canvas.height - paddleHeight, paddle1Y));
+
+            // Computer paddle
+            computerAI();
+
+            // Ball movement
+            ballX += ballSpeedX;
+            ballY += ballSpeedY;
+
+            // Wall collisions
+            if (ballY <= ballRadius || ballY >= canvas.height - ballRadius) {
+                ballSpeedY = -ballSpeedY;
+                audio.play();
+            }
+
+            // Paddle collisions
+            if (
+                ((ballX - ballRadius) <=( 5 + (paddleWidth * 1.2)) && (ballX + ballRadius) >= 5 && (ballY >= paddle1Y - 5) && ballY <= (paddle1Y + paddleHeight + 5)) ||
+                ((ballX + ballRadius) >= (canvas.width - 9 - paddleWidth * 0.2) && (ballX - ballRadius) <= (canvas.width - 9 + paddleWidth) && ballY >= (paddle2Y - 5) && ballY <= (paddle2Y + paddleHeight + 5))
+            ) {
+                ballSpeedX = -ballSpeedX * 1.05;
+                audio.play();;
+                ballSpeedY += (Math.random() * 2 - 1) * (canvas.height * 0.0025);
+                ballSpeedMultiplier = Math.min(ballSpeedMultiplier + 0.05, 1.5); // Cap speed increase
+                ballSpeedX = Math.min(Math.abs(ballSpeedX), maxBallSpeed) * Math.sign(ballSpeedX);
+                ballSpeedY = Math.min(Math.abs(ballSpeedY), maxBallSpeed) * Math.sign(ballSpeedY);
+            }
+
+            // Scoring
+            if (ballX < 0) {
+                computerScore++;
+                resetBall();
+                updateScore();
+            } else if (ballX > canvas.width) {
+                playerScore++;
+                resetBall();
+                updateScore();
+            }
+
+            // Game over
+            if (playerScore >= 5 || computerScore >= 5) {
+                gameState = 'gameOver';
+                gameOverMessage.textContent = playerScore >= 5 ? 'You Win!' :  'Computer Wins!';
+                if(computerScore>=5){
+                    over.play();
+                }
+                if(playerScore>=5){                
+                    win.play();
+                }
+                            
+                gameOverScreen.style.display = 'flex';
+                pauseButton.style.display = 'none';
+                if (isMobile) mobileControls.style.display = 'none';
+                return;
+            }
+
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Net
+            ctx.beginPath();
+            ctx.setLineDash([canvas.height * 0.025, canvas.height * 0.0375]);
+            ctx.moveTo(canvas.width / 2, 0);
+            ctx.lineTo(canvas.width / 2, canvas.height);
+            ctx.strokeStyle = '#ffffff';
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Paddles
+            ctx.fillStyle = '#18fe18d2';
+            ctx.fillRect(5, paddle1Y, paddleWidth, paddleHeight);
+            ctx.fillRect(canvas.width - 10, paddle2Y, paddleWidth, paddleHeight);
+
+            // Ball
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    </script>
+</body>
+</html>
